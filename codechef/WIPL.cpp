@@ -73,50 +73,50 @@ int32_t main()
 		int n, k;
 		cin >> n >> k;
 
-		// pqb pq;
-		// int sum = 0;
-		// FOR(i, n)
-		// {
-		// 	int a;
-		// 	cin >> a;
-		// 	sum += a;
-		// 	pq.push(a);
-		// }
-		// int h1 = 0, h2 = 0;
-		// int ans;
-		// if (sum < 2 * k)
-		// 	ans = -1;
-		// else
-		// {
-		// 	int count = 0;
-		// 	bool flag = false;
-		// 	while (!pq.empty())
-		// 	{
-		// 		if (h1 < k)
-		// 		{
-		// 			h1 += pq.top();
-		// 			pq.pop();
-		// 			count ++;
-		// 		}
-		// 		if (h2 < k && !pq.empty())
-		// 		{
-		// 			h2 += pq.top();
-		// 			pq.pop();
-		// 			count++;
-		// 		}
+		pqb pq;
+		int sum = 0;
+		FOR(i, n)
+		{
+			int a;
+			cin >> a;
+			sum += a;
+			pq.push(a);
+		}
+		int h1 = 0, h2 = 0;
+		int ans;
+		if (sum < 2 * k)
+			ans = -1;
+		else
+		{
+			int count = 0;
+			bool flag = false;
+			while (!pq.empty())
+			{
+				if (h1 < k)
+				{
+					h1 += pq.top();
+					pq.pop();
+					count ++;
+				}
+				if (h2 < k && !pq.empty())
+				{
+					h2 += pq.top();
+					pq.pop();
+					count++;
+				}
 
-		// 		if (h1 >= k && h2 >= k)
-		// 		{
-		// 			flag = true;
-		// 			break;
-		// 		}
-		// 	}
-		// 	if (flag)
-		// 		ans = count;
-		// 	else
-		// 		ans = -1;
-		// }
-		// cout << ans << "\n";
+				if (h1 >= k && h2 >= k)
+				{
+					flag = true;
+					break;
+				}
+			}
+			if (flag)
+				ans = count;
+			else
+				ans = -1;
+		}
+		cout << ans << "\n";
 
 	}
 	cerr << "time taken : " << (float)clock() / CLOCKS_PER_SEC << " secs" << endl;
