@@ -29,6 +29,7 @@ typedef pair<int, int> pi;
 #define MP make_pair
 mt19937                 rng(chrono::steady_clock::now().time_since_epoch().count()); //random shuffler
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds; //Policy based data structure
+
 void s_m()
 {
 	ios_base::sync_with_stdio(false);
@@ -40,14 +41,15 @@ void s_m()
 	freopen("output.txt", "w", stdout);
 #endif
 }
-bool subset_sum(int arr[], int n, int sum)
+bool is_equal_sum(int arr[], int n, int sum)
 {
 	bool t[n + 1][sum + 1];
-	for (int i = 0; i < n + 1; i++)
+	for (int i = 0; i < sum + 1; ++i)
 	{
 		t[0][i] = false;
+		/* code */
 	}
-	for (int i = 0; i < sum + 1; ++i)
+	for (int i = 0; i < n + 1; ++i)
 	{
 		t[i][0] = true;
 		/* code */
@@ -57,12 +59,64 @@ bool subset_sum(int arr[], int n, int sum)
 		for (int j = 1; j < sum + 1; j++)
 		{
 			if (arr[i - 1] <= j)
-				t[i][j] = t[i - 1][j] || t[i - 1][j - arr[i - 1]];
+			{
+				t[i][j] = t[i - 1][j - arr[i - 1]] || t[i - 1][j];
+			}
 			else
 				t[i][j] = t[i - 1][j];
 		}
 	}
 	return t[n][sum];
+
+}
+int is_subset_sum(int arr[], int n, int sum, int k)
+{
+	//initialization
+// 	int x = min(8001,sum+1);
+	bool t[n + 1][sum + 1];
+	int ans = -1;
+	int total = 0;
+	for (int i = 0; i < sum + 1; ++i)
+	{
+		t[0][i] = false;
+		/* code */
+	}
+	for (int i = 0; i < n + 1; ++i)
+	{
+		t[i][0] = true;
+		/* code */
+	}
+	bool flag = true;
+	int temp = INT_MAX;
+	for (int i = 1; i < n + 1; i++)
+	{
+		for (int j = 1; j < sum + 1; j++)
+		{
+			if (arr[i - 1] <= j)
+			{
+				t[i][j] = t[i - 1][j - arr[i - 1]] || t[i - 1][j];
+			}
+			else
+				t[i][j] = t[i - 1][j];
+
+			if (j >= k && t[i][j] && temp > j)
+			{
+				temp = j;
+				// cout << j << "\n";
+				flag = false;
+			}
+			// cout << t[i][j] << " ";
+		}
+		// cout << "\n";
+		total += arr[i - 1];
+		int temp2 = total - temp;
+		if (temp2 >= k && !flag)
+		{
+			ans = i;
+			break;
+		}
+	}
+	return ans;
 }
 int32_t main()
 {
@@ -75,74 +129,47 @@ int32_t main()
 		int sum = 0;
 		FOR(i, n)
 		{
-			int a;
-			cin >> a;
-			arr[i] = a;
-			sum += a;
+			cin >> arr[i];
+			sum += arr[i];
 		}
-		int h1 = 0, h2 = 0;
 		int ans;
+		sort(arr, arr + n, greater<int>());
+		// FOR(i, n) cout << arr[i] << " ";
+		// cout << "\n";
+
 		if (sum < 2 * k)
 			ans = -1;
 		else if (sum == 2 * k)
 		{
-			if (subset_sum(arr, n, k))
+			if (is_equal_sum(arr, n, k))
 				ans = n;
 			else
 				ans = -1;
 		}
 		else
 		{
-			sort(arr, arr + n);
-			int count = 0;
-			int h1 = 0, h2 = 0;
-			int j;
-			for (int i = n - 1; i >= 0; i -= 2)
+			if (arr[0] >= k && arr[1] >= k)
+				ans = 2;
+			else if (arr[0] >= k)
 			{
-				if (h1 < k) {
-					h1 += arr[i];
-					count++;
-					j = i;
-				}
-				else
-					break;
-				/* code */
-			}
-			int i = n - 2;
-			while (i >= 0)
-			{
-				if (i <= j + 1)
+				int x = 0;
+				for (int i = 1; i < n; i++)
 				{
-					if (h2 < k)
+					x += arr[i];
+					if (x >= k)
 					{
-						h2 += arr[i];
-						count++;
-						i -= 1;
-					}
-					else
+						ans = i + 1;
 						break;
-				}
-				else
-				{
-					if (h2 < k) {
-						h2 += arr[i];
-						count++;
-						i -= 2;
 					}
-					else
-						break;
 				}
-
 			}
-			cout << h1 << " " << h2 << "\n";
-			if (h1 >= k && h2 >= k)
-				ans = count;
 			else
-				ans = -1;
+				ans = is_subset_sum(arr, n, sum, k);
 		}
 		cout << ans << "\n";
-
 	}
+
+
 	cerr << "time taken : " << (float)clock() / CLOCKS_PER_SEC << " secs" << endl;
 	return 0;
 }
